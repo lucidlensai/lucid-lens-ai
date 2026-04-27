@@ -218,12 +218,12 @@ const cfg=window.LLAI_CONFIG||{};
     try{localStorage.setItem('llai_sign',sign);}catch(e){}
     // Fetch both daily and weekly
     Promise.all([
-      fetch('https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign='+sign+'&day=today').then(function(r){return r.json();}).catch(function(){return null;}),
-      fetch('https://horoscope-app-api.vercel.app/api/v1/get-horoscope/weekly?sign='+sign).then(function(r){return r.json();}).catch(function(){return null;})
+      fetch('https://freehoroscopeapi.com/api/v1/get-horoscope/daily?sign='+sign).then(function(r){return r.json();}).catch(function(){return null;}),
+      fetch('https://freehoroscopeapi.com/api/v1/get-horoscope/weekly?sign='+sign).then(function(r){return r.json();}).catch(function(){return null;})
     ]).then(function(results){
       var daily=results[0],weekly=results[1];
-      var dailyText=daily&&daily.data&&daily.data.horoscope_data?daily.data.horoscope_data:'';
-      var weeklyText=weekly&&weekly.data&&weekly.data.horoscope_data?weekly.data.horoscope_data:'';
+      var dailyText=daily&&daily.data&&daily.data.horoscope?daily.data.horoscope:(daily&&daily.data&&daily.data.horoscope_data?daily.data.horoscope_data:'');
+      var weeklyText=weekly&&weekly.data&&weekly.data.horoscope?weekly.data.horoscope:(weekly&&weekly.data&&weekly.data.horoscope_data?weekly.data.horoscope_data:'');
       if(!dailyText&&!weeklyText){hFallback(sign,body);return;}
       var html='';
       if(dailyText){html+='<div style="margin-bottom:1.2rem"><div style="font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--iris);margin-bottom:.5rem">Today</div><p style="font-family:Cormorant Garamond,serif;font-style:italic;color:rgba(240,237,248,.85);line-height:1.9;font-size:1rem">'+dailyText+'</p></div>';}
