@@ -137,6 +137,14 @@ const cfg=window.LLAI_CONFIG||{};
     var t={home:['My Dreams','Dream archive'],submit:['Submit a dream','Describe your dream'],account:['Your account','Plan &amp; profile']};
     document.getElementById('topbar-title').textContent=t[n][0];
     document.getElementById('topbar-sub').textContent=t[n][1]||'';
+    // Reset submit form when navigating to submit panel
+    if(n==='submit'){
+      document.getElementById('submit-form').style.display='block';
+      document.getElementById('processing-card').style.display='none';
+      document.getElementById('dream-input').value='';
+      document.getElementById('char-num').textContent='0';
+      document.getElementById('mood-select').selectedIndex=0;
+    }
   }
 
   function updateChar(){document.getElementById('char-num').textContent=document.getElementById('dream-input').value.length;}
