@@ -224,6 +224,9 @@ const cfg=window.LLAI_CONFIG||{};
       var daily=results[0],weekly=results[1];
       var dailyText=daily&&daily.data&&daily.data.horoscope?daily.data.horoscope:(daily&&daily.data&&daily.data.horoscope_data?daily.data.horoscope_data:'');
       var weeklyText=weekly&&weekly.data&&weekly.data.horoscope?weekly.data.horoscope:(weekly&&weekly.data&&weekly.data.horoscope_data?weekly.data.horoscope_data:'');
+      // Debug: log raw responses
+      console.log('daily response:', JSON.stringify(results[0]));
+      console.log('weekly response:', JSON.stringify(results[1]));
       if(!dailyText&&!weeklyText){hFallback(sign,body);return;}
       var html='';
       if(dailyText){html+='<div style="margin-bottom:1.2rem"><div style="font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--iris);margin-bottom:.5rem">Today</div><p style="font-family:Cormorant Garamond,serif;font-style:italic;color:rgba(240,237,248,.85);line-height:1.9;font-size:1rem">'+dailyText+'</p></div>';}
