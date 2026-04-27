@@ -217,22 +217,7 @@ const cfg=window.LLAI_CONFIG||{};
     }
     try{localStorage.setItem('llai_sign',sign);}catch(e){}
     // Fetch both daily and weekly
-    Promise.all([
-      fetch('https://freehoroscopeapi.com/api/v1/get-horoscope/daily?sign='+sign).then(function(r){return r.json();}).catch(function(){return null;}),
-      fetch('https://freehoroscopeapi.com/api/v1/get-horoscope/weekly?sign='+sign).then(function(r){return r.json();}).catch(function(){return null;})
-    ]).then(function(results){
-      var daily=results[0],weekly=results[1];
-      var dailyText=daily&&daily.data&&daily.data.horoscope?daily.data.horoscope:(daily&&daily.data&&daily.data.horoscope_data?daily.data.horoscope_data:'');
-      var weeklyText=weekly&&weekly.data&&weekly.data.horoscope?weekly.data.horoscope:(weekly&&weekly.data&&weekly.data.horoscope_data?weekly.data.horoscope_data:'');
-      // Debug: log raw responses
-      console.log('daily response:', JSON.stringify(results[0]));
-      console.log('weekly response:', JSON.stringify(results[1]));
-      if(!dailyText&&!weeklyText){hFallback(sign,body);return;}
-      var html='';
-      if(dailyText){html+='<div style="margin-bottom:1.2rem"><div style="font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--iris);margin-bottom:.5rem">Today</div><p style="font-family:Cormorant Garamond,serif;font-style:italic;color:rgba(240,237,248,.85);line-height:1.9;font-size:1rem">'+dailyText+'</p></div>';}
-      if(weeklyText){html+='<div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem"><div style="font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--iris);margin-bottom:.5rem">This Week</div><p style="font-family:Cormorant Garamond,serif;font-style:italic;color:rgba(240,237,248,.85);line-height:1.9;font-size:1rem">'+weeklyText+'</p></div>';}
-      body.innerHTML=html;
-    });
+    fetch('https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign='+sign+'&day=today').then(function(r){return r.json();}).then(function(d){if(d&&d.data&&d.data.horoscope_data){body.innerHTML='<p style="font-family:Cormorant Garamond,serif;font-style:italic;color:rgba(240,237,248,.85);line-height:1.9">'+d.data.horoscope_data+'</p>';}else{hFallback(sign,body);}}).catch(function(){hFallback(sign,body);});
   }
 
   function hFallback(sign,body){var horoscopes={aries:"Trust your instincts. The stars favor bold moves.",taurus:"Patience brings rewards. What you seek is closer than it appears.",gemini:"Your mind is sharp. Stay open to unexpected conversations.",cancer:"A quiet moment of reflection may reveal what you truly need.",leo:"Lead with generosity. What you give returns in unexpected ways.",virgo:"A careful approach to a lingering problem brings resolution.",libra:"Balance is calling. Today offers a chance to restore harmony.",scorpio:"Trust your intuition. It points toward a truth worth facing.",sagittarius:"An idea could open a door you did not know existed.",capricorn:"Steady focus moves you further than rushing ever could.",aquarius:"Do not hold back an unconventional idea. Originality is needed.",pisces:"Subtle feelings carry messages today. The invisible world speaks."};
