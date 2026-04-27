@@ -35,7 +35,6 @@ const cfg=window.LLAI_CONFIG||{};
       document.getElementById('topbar-title').innerHTML=g+', <em style="font-style:italic;color:#c9b8f0;">'+first+'</em>';
       document.getElementById('topbar-sub').textContent='Welcome back';
       await Promise.all([loadDreams(),loadCredits()]);
-      initHoroscope();
       updateUI();
       if(plan==='Dreamer Free'&&credits===0){
         var k='llai_shown_'+uid;
@@ -137,7 +136,6 @@ const cfg=window.LLAI_CONFIG||{};
     var t={home:['My Dreams','Dream archive'],submit:['Submit a dream','Describe your dream'],account:['Your account','Plan &amp; profile']};
     document.getElementById('topbar-title').textContent=t[n][0];
     document.getElementById('topbar-sub').textContent=t[n][1]||'';
-    // Reset submit form when navigating to submit panel
     if(n==='submit'){
       document.getElementById('submit-form').style.display='block';
       document.getElementById('processing-card').style.display='none';
@@ -153,6 +151,7 @@ const cfg=window.LLAI_CONFIG||{};
     var btn='<button onclick="showPanel(\'home\');loadDreams();" style="font-family:DM Sans,sans-serif;font-size:.8rem;text-transform:uppercase;color:var(--ink);background:linear-gradient(135deg,var(--aurora1),var(--aurora2));border:none;padding:.7rem 1.6rem;border-radius:99px;cursor:pointer">View dream</button>';
     document.getElementById('processing-card').innerHTML='<div style="text-align:center;padding:2rem"><h3 style="font-family:Cormorant Garamond,serif;font-size:1.4rem;color:var(--fog);margin-bottom:.8rem">'+title+'</h3><p style="font-size:.84rem;color:var(--lavender);margin:0 auto 1.5rem">'+msg+'</p>'+btn+'</div>';
   }
+
   async function startProcessing(){
     var txt=document.getElementById('dream-input').value.trim();
     var mood=document.getElementById('mood-select').value;
@@ -170,7 +169,6 @@ const cfg=window.LLAI_CONFIG||{};
       setTimeout(function(){document.getElementById('step2').className='proc-step active';},500);
       setTimeout(function(){document.getElementById('step2').className='proc-step done';document.getElementById('step2').querySelector('.proc-icon').textContent='v';document.getElementById('step3').className='proc-step active';},8000);
       setTimeout(function(){document.getElementById('step3').className='proc-step done';document.getElementById('step3').querySelector('.proc-icon').textContent='v';document.getElementById('step4').className='proc-step active';},20000);
-      // Poll every 30 seconds to detect when dream is Complete
       var pollCount=0,maxPolls=20;
       var pollInterval=setInterval(async function(){
         pollCount++;
@@ -201,27 +199,3 @@ const cfg=window.LLAI_CONFIG||{};
       alert('Something went wrong. Try again.');
     }
   }
-
-  // ── HOROSCOPE ──
-  var SIGNS={aries:['&#9800;','Aries','Mar 21-Apr 19'],taurus:['&#9801;','Taurus','Apr 20-May 20'],gemini:['&#9802;','Gemini','May 21-Jun 20'],cancer:['&#9803;','Cancer','Jun 21-Jul 22'],leo:['&#9804;','Leo','Jul 23-Aug 22'],virgo:['&#9805;','Virgo','Aug 23-Sep 22'],libra:['&#9806;','Libra','Sep 23-Oct 22'],scorpio:['&#9807;','Scorpio','Oct 23-Nov 21'],sagittarius:['&#9808;','Sagittarius','Nov 22-Dec 21'],capricorn:['&#9809;','Capricorn','Dec 22-Jan 19'],aquarius:['&#9810;','Aquarius','Jan 20-Feb 18'],pisces:['&#9811;','Pisces','Feb 19-Mar 20']};
-  function loadHoroscope(){
-    var sign=document.getElementById('horoscope-sign').value;
-    var body=document.getElementById('horoscope-body');
-    body.innerHTML='<div class="loading-pulse"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div><span>Loading...</span></div>';
-    var now=new Date();
-    document.getElementById('horoscope-date').textContent=now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-    var sd=SIGNS[sign];
-    if(sd){
-      document.getElementById('horoscope-glyph').innerHTML=sd[0];
-      document.getElementById('horoscope-sign-name').innerHTML=sd[1]+'<br><small style="font-size:.7rem;color:var(--iris)">'+sd[2]+'</small>';
-    }
-    try{localStorage.setItem('llai_sign',sign);}catch(e){}
-    // Fetch both daily and weekly
-    fetch('https://corsproxy.io/?url=https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign='+sign+'%26day=today').then(function(r){return r.json();}).then(function(d){if(d&&d.data&&d.data.horoscope_data){body.innerHTML='<p style="font-family:Cormorant Garamond,serif;font-style:italic;color:rgba(240,237,248,.85);line-height:1.9">'+d.data.horoscope_data+'</p>';}else{hFallback(sign,body);}}).catch(function(){hFallback(sign,body);});
-  }
-
-  function hFallback(sign,body){var horoscopes={aries:"Trust your instincts. The stars favor bold moves.",taurus:"Patience brings rewards. What you seek is closer than it appears.",gemini:"Your mind is sharp. Stay open to unexpected conversations.",cancer:"A quiet moment of reflection may reveal what you truly need.",leo:"Lead with generosity. What you give returns in unexpected ways.",virgo:"A careful approach to a lingering problem brings resolution.",libra:"Balance is calling. Today offers a chance to restore harmony.",scorpio:"Trust your intuition. It points toward a truth worth facing.",sagittarius:"An idea could open a door you did not know existed.",capricorn:"Steady focus moves you further than rushing ever could.",aquarius:"Do not hold back an unconventional idea. Originality is needed.",pisces:"Subtle feelings carry messages today. The invisible world speaks."};
-var text=horoscopes[sign]||horoscopes.aries;body.innerHTML='<p style="font-family:Cormorant Garamond,serif;font-style:italic;color:rgba(240,237,248,.85);line-height:1.9">'+text+'</p>';}
-
-  // Initialize horoscope on load
-  function initHoroscope(){try{var s=localStorage.getItem('llai_sign');if(s)document.getElementById('horoscope-sign').value=s;}catch(e){}loadHoroscope();}
